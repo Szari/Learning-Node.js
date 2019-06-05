@@ -2,7 +2,7 @@
 
 const fs = require('fs');
 
-// create file 
+// create file
 // fs.writeFile('example.txt', "This is an example", (err) =>{
 //     if(err)
 //         console.log(err);
@@ -12,7 +12,7 @@ const fs = require('fs');
 //             if(err)
 //                 console.log(err);
 //             else
-//                 console.log(file);    
+//                 console.log(file);
 //         });
 //     }
 
@@ -21,11 +21,11 @@ const fs = require('fs');
 //         if(err)
 //             console.log(err);
 //         else
-//             console.log('Successfully renamed the file');      
+//             console.log('Successfully renamed the file');
 //     });
 // });
 
-// // Append 
+// // Append
 // fs.appendFile('example1.txt', 'Some data being appeded', (err) =>{
 //     if(err)
 //         console.log(err);
@@ -41,38 +41,52 @@ const fs = require('fs');
 //         console.log('Successfully deleted the file');
 // });
 
-// Create the folder 
-fs.mkdir('files', (err)=>{
-    if(err)
-        console.log(err);
-    else{
-        fs.writeFile('./files/example.txt', 'Random words', (err)=>{
-            if(err)
-                console.log(err);
-            else{
-                console.log('Successfully created file');
-                fs.readFile('./files/example.txt', 'utf8', (err, file)=>{
-                    if(err)
-                        console.log(err);
-                    else
-                        console.log(file); 
-                });
-                fs.unlink('./files/example.txt', (err)=>{
-                    if(err)
-                        console.log(err);  
-                    else{
-                        //Remove the folder 
-                        //WHY DOESN'T IT WORK?!?!?!?
-                        fs.rmdir('./files', (err)=>{
-                            if(err)
-                                console.log(err);
-                            else    
-                                console.log('Successfully deleted the file and folder');      
-                        });
-                    }     
-                });
-                
-            }
-        });
-    }
+// Create the folder
+
+const mkdir = (...args) => new Promise((resolve, reject) =>
+    fs.mkdir(...args, (err, ...out) => {
+        if(err) return reject(err);
+        return resolve(...out)
+    })
+);
+const writeFile = (...args) => new Promise((resolve, reject) =>
+    fs.writeFile(...args, (err, ...out) => {
+        if(err) return reject(err);
+        return resolve(...out)
+    })
+);
+
+const readFile = (...args) => new Promise((resolve, reject) =>
+    fs.readFile(...args, (err, ...out) => {
+        if (err) return reject(err);
+        return resolve(...out);
+    })
+);
+
+const unlink = (...args) => new Promise((resolve, reject) =>
+    fs.unlink(...args, (err, ...out) => {
+        if(err) return reject(err);
+        return resolve(...out)
+    })
+);
+
+const rmdir = (...args) => new Promise((resolve, reject) =>
+    fs.rmdir(...args, (err, ...out) => {
+        if(err) return reject(err);
+        return resolve(...out)
+    })
+);
+
+
+const main = async () => {
+    await mkdir('files');
+    await writeFile('./files/example.txt', 'Random words');
+    console.log(await readFile('./files/example.txt', {encoding: 'utf8'}));
+    await unlink('./files/example.txt');
+    await rmdir('./files');
+    console.log('Successfully deleted the file and folder');
+};
+
+main().catch(err => {
+    console.error(err);
 });
