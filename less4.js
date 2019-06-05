@@ -81,6 +81,7 @@ const rmdir = (...args) => new Promise((resolve, reject) =>
 const main = async () => {
     await mkdir('files');
     await writeFile('./files/example.txt', 'Random words');
+    console.log('Successfully created file');
     console.log(await readFile('./files/example.txt', {encoding: 'utf8'}));
     await unlink('./files/example.txt');
     await rmdir('./files');
